@@ -1,0 +1,635 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+    <script>
+
+        $(function() {
+            load_page()
+        });
+
+        function load_page(){
+            $("#landing-page").show()
+            $("#coveragenews").hide()
+            $("#tickernews").hide()
+            $("#construction").hide()
+        }
+
+        function submit() {
+          
+            var dropdown = document.getElementById("tickers")
+            var ticker = dropdown.value;
+
+            dropdown = document.getElementById("coverage")
+            var coverage = dropdown.value;
+
+            var context = document.getElementById("context").value
+
+            if (ticker == "" && coverage == "") {
+              alert('Please select a ticker or coverage!')
+            } else if (ticker != "" && coverage != "") {
+              alert('Please only select an option from one of the dropdowns!')
+            } else {
+              $("#landing-page").hide()
+              if (ticker == "") {
+                  $("#coveragenews").show()
+              } else {
+                if (ticker == "nvidia") {
+                  ticker_news(context, ticker)
+                  $("#tickernews").show()
+                } else {
+                  $("#construction").show()
+                }
+              }
+            }
+        }
+
+        function popup() {
+          var popupWindow = document.getElementById("popup-window");
+          var closeButton = document.getElementById("close-button");
+          popupWindow.style.display = "block";
+          closeButton.addEventListener("click", function() {
+            popupWindow.style.display = "none"; 
+            load_page()
+          });
+        }
+
+        function ticker_news(context, ticker) {
+          let data = {'context': context, 'ticker': ticker}
+          $.ajax({
+                type: "POST",
+                url: "/ticker_news",                
+                dataType : "json",
+                contentType: "application/json; charset=utf-8",
+                
+                data : JSON.stringify(data),
+                beforeSend: function () { 
+                    $("#spinner-div").show()
+                },
+                success: function(data, text){
+                    headline_data = data
+                    $("#custom").text(headline_data['custom'])
+                    $("#summary-1").text(headline_data['article-1-summary'])
+                    $("#title-1").text(headline_data['article-1-title'])
+                    $("#source-1").text(headline_data['article-1-source'])
+                    $("#date-1").text(headline_data['article-1-date'])
+                    $("#summary-2").text(headline_data['article-2-summary'])
+                    $("#title-2").text(headline_data['article-2-title'])
+                    $("#source-2").text(headline_data['article-2-source'])
+                    $("#date-2").text(headline_data['article-2-date'])
+                    $("#summary-3").text(headline_data['article-3-summary'])
+                    $("#title-3").text(headline_data['article-3-title'])
+                    $("#source-3").text(headline_data['article-3-source'])
+                    $("#date-3").text(headline_data['article-3-date'])
+                    $("#summary-4").text(headline_data['article-4-summary'])
+                    $("#title-4").text(headline_data['article-4-title'])
+                    $("#source-4").text(headline_data['article-4-source'])
+                    $("#date-4").text(headline_data['article-4-date'])
+                },
+                error: function(request, status, error){
+                    console.log("Error");
+                    console.log(request)
+                    console.log(status)
+                    console.log(error)
+                },
+                complete: function () { 
+                    $("#spinner-div").hide()
+                },
+            });
+        }
+
+    </script>  
+
+<!-- <div id="popup-window">
+  <head>
+    <style>
+      .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-height: 650px;
+          }
+    </style>
+  </head>
+  <div class="container">
+  <h1>Pop-up Window</h1>
+  <p>This is a pop-up window.</p>
+  <button id="close-button">Close</button>
+</div>
+</div>      -->
+
+<div id="landing-page">
+  
+  <head>
+    <title>Investment News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        #landing-page {
+          display: flex;
+          justify-content: center; /* Aligns content horizontally */
+          align-items: center; /* Aligns content vertically */
+          height: 100vh; /* Sets height to full viewport height */
+          font-family: Arial, sans-serif; /* Example font for consistency */
+        }
+    
+        .container {
+          text-align: center;
+        }
+    
+        .input-question {
+          font-size: 18px;
+          margin-bottom: 10px;
+          color: lightskyblue;
+          font-weight: normal;
+        }
+    
+        .input-field {
+          padding: 5px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin-bottom: 10px;
+          justify-content: center;
+        }
+    
+        .input-field:placeholder {
+            justify-content: ceneter;
+        }
+    
+        .dropdown {
+          padding: 5px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          width: 200px;
+          margin-bottom: 10px;
+        }
+    
+        .button-container {
+          margin-top: 10px;
+          display: flex;
+          justify-content:space-evenly;
+          align-items: center;
+        }
+    
+        .button-style {
+          margin-top: 10px;
+          padding: 8px 12px;
+          background-color: #d1d4d1;
+          color: rgb(3, 0, 0);
+          border: none;
+          border-radius: 4px;
+          font-size: 16px;
+          cursor: pointer;
+          align-items: center;
+        }
+    
+        .button-style:hover {
+            background-color: blue;
+            color: white;
+        }
+
+        .selections {
+          margin-left: auto;
+          margin-right: auto;
+          border-collapse: separate; 
+          border-spacing: 1em;
+        }
+
+        .pagetitle {
+          font-size: 20px;
+          font-weight: bold;
+          color:blue;
+        }
+
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-height: 650px;
+          }
+
+      </style>
+    </head>
+    
+    <body>
+      <div class="container">
+      <img style="width:80px;height:80px;" src="https://cdn3.iconfinder.com/data/icons/stock-trading-3/64/svg_file-28-512.png"></img>
+      <br><br>
+      <h1 class="pagetitle">Investment News</h1>
+      <hr></hr>
+      <table class="selections">
+        <tr>
+            <td>
+              <text><strong>Select Ticker</strong></text>
+              <br><br>
+              <select id="tickers" class="dropdown">
+                <option value="" disabled selected>Select an option</option>
+                <option value="nvidia">NVIDIA</option>
+                <option value="netflix">Netflix</option>
+                <option value="LM">Lockheed Martin</option>
+                <option value="GE">General Electric</option>
+                <option value="JJ">Johnson & Johnson</option>
+              </select>
+            </td>
+            <td><text><strong>OR</strong></text></td>
+            <td>
+              <text><strong>Select Coverage</strong></text>
+              <br><br>
+              <select id="coverage" class="dropdown">
+                <option value="" disabled selected>Select an option</option>
+                <option value="tech">Technology</option>
+                <option value="indus">Industrials</option>
+                <option value="health">Healthcare</option>
+              </select>
+            </td>
+        </tr>
+      </table>
+      <em>Please only make a selection in one of the dropdown menus.</em>
+      <hr></hr>
+      <table class="selections">
+        <tr>
+          <td>
+          <text><strong>In a sentence, explain your investment status.</strong></text><br><br>
+          <textarea id="context" type="text" class="input-field" style="width: 100%;" placeholder="Existing position, new area of interest, etc."></textarea>
+          </td>
+        </tr>
+      </table>
+      <button class="button-style" onclick="submit()" type="button">Submit</button>
+      </div>
+    </body>
+    
+</div>
+
+<div id="tickernews">
+
+  <head>
+    <title>Investment News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        #tickernews {
+          display: flex;
+          justify-content: center; /* Aligns content horizontally */
+          align-items: center; /* Aligns content vertically */
+          height: 100vh; /* Sets height to full viewport height */
+          font-family: Arial, sans-serif; /* Example font for consistency */
+        }
+    
+        .input-question {
+          font-size: 18px;
+          margin-bottom: 10px;
+          color: lightskyblue;
+          font-weight: normal;
+        }
+    
+        .input-field {
+          padding: 5px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin-bottom: 10px;
+          justify-content: center;
+        }
+        
+        .dropdown {
+          padding: 5px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          width: 200px;
+          margin-bottom: 10px;
+        }
+    
+        .button-container {
+          margin-top: 10px;
+          display: flex;
+          justify-content:space-evenly;
+          align-items: center;
+        }
+    
+        .button-style {
+          margin-top: 10px;
+          padding: 8px 12px;
+          background-color: #d1d4d1;
+          color: rgb(3, 0, 0);
+          border: none;
+          border-radius: 4px;
+          font-size: 16px;
+          cursor: pointer;
+          align-items: center;
+        }
+    
+        .button-style:hover {
+            background-color: blue;
+            color: white;
+        }
+
+        .selections {
+          margin-left: auto;
+          margin-right: auto;
+          border-collapse: separate; 
+          border-spacing: 1em;
+        }
+
+        .pagetitle {
+          font-size: 20px;
+          font-weight: bold;
+          color:blue;
+        }
+
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow-y:auto;
+            max-height: 650px;
+          }
+
+        .articles {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .aligncode {
+          text-align: left;
+        }
+
+      </style>
+    </head>
+
+    <body>
+      <div class="container">
+          <img style="width:80px;height:80px;" src="https://cdn3.iconfinder.com/data/icons/stock-trading-3/64/svg_file-28-512.png"></img>
+          <br><br>
+          <h1 class="pagetitle">Investment News</h1>
+          <hr></hr>
+          <div class="aligncode"><strong>LLM Understanding of Investment Status:</strong><text id="custom"></text></strong><br><br>
+          <a id="title-1" style="font-weight:bold; font-size:13px;"></a><br>
+          <text>Via <a id="source-1" href="https://finance.yahoo.com/news/nvidia-still-hot-2-artificial-101500287.html"></a> | <text id="date-1" style="font-style:italic;"></text></text><br>
+          <div class="aligncode"><b>Summary:</b> <text id="summary-1" style="text-align:left; font-size:10px"></text></div>
+          <hr></hr>
+          <text id="title-2" style="font-weight:bold; font-size:13px;"></text><br>
+          <text>Via <a id="source-2" href="https://www.economist.com/the-economist-explains/2024/02/27/why-do-nvidias-chips-dominate-the-ai-market"></a> | <text id="date-2" style="font-style:italic;"></text></text><br>
+          <div class="aligncode"><b>Summary:</b> <text id="summary-2" style="text-align:left; font-size:10px"></text></div>
+          <hr></hr>
+          <text id="title-3" style="font-weight:bold; font-size:13px;"></text><br>
+          <text>Via <a id="source-3" href="https://www.investors.com/research/nvda-stock-has-gained-this-year-but-is-nvidia-a-buy/"></a> | <text id="date-3" style="font-style:italic;"></text></text><br>
+          <div class="aligncode"><b>Summary:</b> <text id="summary-3" style="text-align:left; font-size:10px"></text></div>
+          <hr></hr>
+          <text id="title-4" style="font-weight:bold; font-size:13px;"></text><br>
+          <text>Via <a id="source-4" href="https://www.investors.com/market-trend/stock-market-today/dow-jones-nasdaq-sp500-cathie-wood-nvidia-nvda-stock/"></a> | <text id="date-4" style="font-style:italic;"></text></text><br>
+          <div class="aligncode"><b>Summary:</b> <text id="summary-4" style="text-align:left; font-size:10px"></text><br></div>
+      </div>
+    </body>
+
+</div>
+
+<div id="coveragenews">
+
+  <head>
+    <title>Investment News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        #coveragenews {
+          display: flex;
+          justify-content: center; /* Aligns content horizontally */
+          align-items: center; /* Aligns content vertically */
+          height: 100vh; /* Sets height to full viewport height */
+          font-family: Arial, sans-serif; /* Example font for consistency */
+        }
+    
+        .container {
+          text-align: center;
+        }
+    
+        .input-question {
+          font-size: 18px;
+          margin-bottom: 10px;
+          color: lightskyblue;
+          font-weight: normal;
+        }
+    
+        .input-field {
+          padding: 5px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin-bottom: 10px;
+          justify-content: center;
+        }
+    
+        .input-field:placeholder {
+            justify-content: ceneter;
+        }
+    
+        .dropdown {
+          padding: 5px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          width: 200px;
+          margin-bottom: 10px;
+        }
+    
+        .button-container {
+          margin-top: 10px;
+          display: flex;
+          justify-content:space-evenly;
+          align-items: center;
+        }
+    
+        .button-style {
+          margin-top: 10px;
+          padding: 8px 12px;
+          background-color: #d1d4d1;
+          color: rgb(3, 0, 0);
+          border: none;
+          border-radius: 4px;
+          font-size: 16px;
+          cursor: pointer;
+          align-items: center;
+        }
+    
+        .button-style:hover {
+            background-color: blue;
+            color: white;
+        }
+
+        .selections {
+          margin-left: auto;
+          margin-right: auto;
+          border-collapse: separate; 
+          border-spacing: 1em;
+        }
+
+        .pagetitle {
+          font-size: 20px;
+          font-weight: bold;
+          color:blue;
+        }
+
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          }
+
+      </style>
+    </head>
+
+    <body>
+      <div class="container">
+          coverage
+      </div>
+    </body>
+
+</div>
+
+<div id="construction">
+
+  <head>
+    <title>Investment News</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
+        #construction {
+          display: flex;
+          justify-content: center; /* Aligns content horizontally */
+          align-items: center; /* Aligns content vertically */
+          height: 100vh; /* Sets height to full viewport height */
+          font-family: Arial, sans-serif; /* Example font for consistency */
+        }
+    
+        .container {
+          text-align: center;
+        }
+    
+        .input-question {
+          font-size: 18px;
+          margin-bottom: 10px;
+          color: lightskyblue;
+          font-weight: normal;
+        }
+    
+        .input-field {
+          padding: 5px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin-bottom: 10px;
+          justify-content: center;
+        }
+    
+        .input-field:placeholder {
+            justify-content: ceneter;
+        }
+    
+        .dropdown {
+          padding: 5px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          width: 200px;
+          margin-bottom: 10px;
+        }
+    
+        .button-container {
+          margin-top: 10px;
+          display: flex;
+          justify-content:space-evenly;
+          align-items: center;
+        }
+    
+        .button-style {
+          margin-top: 10px;
+          padding: 8px 12px;
+          background-color: #d1d4d1;
+          color: rgb(3, 0, 0);
+          border: none;
+          border-radius: 4px;
+          font-size: 16px;
+          cursor: pointer;
+          align-items: center;
+        }
+    
+        .button-style:hover {
+            background-color: blue;
+            color: white;
+        }
+
+        .selections {
+          margin-left: auto;
+          margin-right: auto;
+          border-collapse: separate; 
+          border-spacing: 1em;
+        }
+
+        .pagetitle {
+          font-size: 20px;
+          font-weight: bold;
+          color:blue;
+        }
+
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          }
+
+      </style>
+    </head>
+
+    <body>
+      <div class="container">
+          <strong>News for this ticker/coverage has not yet been loaded into the system.</strong>
+      </div>
+    </body>
+
+</div>
+
+
+
+{% endblock %}
+
