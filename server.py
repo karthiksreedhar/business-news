@@ -8,7 +8,7 @@ import openai
 import PyPDF2
 
 import secrets
-openai.api_key = 'GPT-API-KEY'
+openai.api_key = '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'
 
 import json
 from base64 import b64decode
